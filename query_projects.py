@@ -14,7 +14,7 @@ def print_tabular(rows,headers = None):
     """ 
     Formats columns in tabularized format 
 
-    :param  list rows    :    list of lists
+    :param  list rows    : list of lists
     :param  list headers : list of headers to print
 
     :return list         : list of lines to print
@@ -47,7 +47,7 @@ def print_tabular(rows,headers = None):
     print()
 
 if __name__ == '__main__':
-    description = ("Scape for Legion project(s) details\n")
+    description = ("Scrape for Legion project(s) details\n")
     parser = argparse.ArgumentParser(description     = description,
                                      formatter_class = argparse.RawTextHelpFormatter
     )
@@ -64,7 +64,7 @@ if __name__ == '__main__':
     )
     parser.add_argument('--url', '--u',
                          help     = 'End-point URL',
-                         default  = "https://api.legion.cc/rounds",
+                         default  = 'https://api.legion.cc/rounds',
                          required = False
     )
     parser.add_argument('--token', '--t',

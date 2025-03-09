@@ -56,6 +56,12 @@ if __name__ == '__main__':
                          default  = '',
                          required = False 
     )
+    parser.add_argument('--view','--v',
+                         help     = 'View all, new, old projects. Default all',
+                         choices  = ['all', 'new', 'old'],
+                         default  = 'all',
+                         required = False 
+    )    
     parser.add_argument('--short', '--s',
                          help     = 'Display condensed format, otherwise print raw json',
                          action   = 'store_true',
@@ -87,17 +93,23 @@ if __name__ == '__main__':
     }
     
     try:
-        # make the get request
-        response = requests.get(args.url, headers=headers)
-        response.raise_for_status()
+        # determine the view style 
+        urls = [args.url + '?open=true', args.url + '?open=false']
+        if args.view == 'old':
+            urls = [args.url + '?open=false']
+        elif args.view == 'new':
+            urls = [args.url + '?open=true']
 
-        ret = response.json()
-        projects = ret.get("list", [])
+        projects = []
+        for url in urls:
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+            projects += response.json()
 
         if args.short:
            summary = [ [p['project']['name'],
-                        p['round'].get('chain', {}).get('name'),
-                        p['round'].get('contract', {}).get('address', '')] for p in projects if args.filter in p['project']['name'].lower()
+                        p['rounds'][0].get('chain', {}).get('name'),
+                        p['rounds'][0].get('contract', {}).get('address', '')] for p in projects if args.filter in p['project']['name'].lower()
            ]
            summary = sorted(summary, key = lambda x: x[0].lower())
            print_tabular(summary, ['Name', 'Chain', 'Contract'])

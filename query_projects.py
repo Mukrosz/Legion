@@ -156,7 +156,7 @@ if __name__ == '__main__':
             projects = get_project_info(projects)
             summary = [ p for p in projects if args.filter in p[0].lower() ]
             summary = sorted(summary, key = lambda x: x[0].lower())
-            print_tabular(summary, ['Name', 'Chain', 'Contract', 'Stage', 'Asset', 'FDV', 'Target', 'TGE', 'Vest', 'Clff', 'Lock', 'Requested'])
+            print_tabular(summary, ['Name', 'Chain', 'Contract', 'Stage', 'Asset', 'FDV', 'Target', 'TGE', 'Vest', 'Cliff', 'Lock', 'Requested'])
         else:
             for p in projects:
                 if args.filter in p.get("project", {}).get("name").lower():

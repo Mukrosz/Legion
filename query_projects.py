@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/scripts/ap/graphhql/bin/python3
 """
 Query Legion API for project info
 """
@@ -7,7 +7,7 @@ import argparse
 import json
 import jwt
 import requests
-from   datetime import datetime
+from   datetime import datetime, timedelta
 from   requests.exceptions import HTTPError, ConnectionError, Timeout, RequestException
 
 def print_tabular(rows,headers = None):
@@ -46,8 +46,53 @@ def print_tabular(rows,headers = None):
         print(line)
     print()
 
+def shorten_number(num):
+    """ 
+    Reduce a large number into an abbreviated format(1000 -> 1k) 
+
+    :param  int num : number to shorten 
+    :return str     : shortened numer as a string
+    """
+    if num < 100:
+        return ''
+    for factor, suffix in [(1_000_000, 'M'), (1_000, 'k')]:
+        if num >= factor:
+            short = num / factor
+            return f"{short:.1f}".rstrip('0').rstrip('.') + suffix
+    return str(num)
+
+def get_project_info(projects):
+    """ 
+    Extract relevant project fields and return a clean list of projects
+
+    :param  json projects : a json of projects and assossiated values
+    :return list          : a list of lists of projects and respective project values
+    """
+    project_list = []
+    for project in projects:
+        for tier in project.get('rounds'):
+            name      = project['project']['name'].lower()
+            chain     = tier.get('chain', {}).get('name', '')[:3].lower()
+            contract  = tier.get('contract', {}).get('address', '')
+
+            stage     = tier.get('stage', '').lower()
+            stage     = 'closed' if 'success' in stage else stage
+
+            asset     = tier.get('acceptedAsset', {}).get('symbol', '')
+            fdv       = shorten_number(tier.get('raiseValuation', 0))
+            target    = shorten_number(tier.get('raiseTarget', 0))
+            tge       = str(tier.get('estimatedTge', ''))
+            vesting   = str(timedelta(seconds = tier.get('vestingDuration', 0)).days)
+            cliff     = str(timedelta(seconds = tier.get('vestingCliffDuration', 0)).days)
+            lock      = str(timedelta(seconds = tier.get('lockupPeriod', 0)).days)
+            requested = shorten_number(tier.get('totalRequestedAllocation', 0))
+
+            project_list += [[ name, chain, contract, stage, asset, fdv, target, tge, vesting, cliff, lock, requested ]]
+
+    return project_list
+
 if __name__ == '__main__':
-    description = ("Scrape for Legion project(s) details\n")
+    description = ("Scrape for Legion project details\n")
     parser = argparse.ArgumentParser(description     = description,
                                      formatter_class = argparse.RawTextHelpFormatter
     )
@@ -57,11 +102,11 @@ if __name__ == '__main__':
                          required = False 
     )
     parser.add_argument('--view','--v',
-                         help     = 'View all, new, old projects. Default all',
+                         help     = 'View all, new, old projects. Default new',
                          choices  = ['all', 'new', 'old'],
                          default  = 'all',
                          required = False 
-    )    
+    )
     parser.add_argument('--short', '--s',
                          help     = 'Display condensed format, otherwise print raw json',
                          action   = 'store_true',
@@ -70,7 +115,7 @@ if __name__ == '__main__':
     )
     parser.add_argument('--url', '--u',
                          help     = 'End-point URL',
-                         default  = 'https://api.legion.cc/rounds',
+                         default  = "https://api.legion.cc/rounds",
                          required = False
     )
     parser.add_argument('--token', '--t',
@@ -104,15 +149,14 @@ if __name__ == '__main__':
         for url in urls:
             response = requests.get(url, headers=headers)
             response.raise_for_status()
+            project = response.json()
             projects += response.json()
-
+        
         if args.short:
-           summary = [ [p['project']['name'],
-                        p['rounds'][0].get('chain', {}).get('name'),
-                        p['rounds'][0].get('contract', {}).get('address', '')] for p in projects if args.filter in p['project']['name'].lower()
-           ]
-           summary = sorted(summary, key = lambda x: x[0].lower())
-           print_tabular(summary, ['Name', 'Chain', 'Contract'])
+            projects = get_project_info(projects)
+            summary = [ p for p in projects if args.filter in p[0].lower() ]
+            summary = sorted(summary, key = lambda x: x[0].lower())
+            print_tabular(summary, ['Name', 'Chain', 'Contract', 'Stage', 'Asset', 'FDV', 'Target', 'TGE', 'Vest', 'Clff', 'Lock', 'Requested'])
         else:
             for p in projects:
                 if args.filter in p.get("project", {}).get("name").lower():

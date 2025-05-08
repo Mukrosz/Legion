@@ -73,7 +73,7 @@ def get_project_info(projects):
         for tier in project.get('rounds'):
             name      = project['project']['name'].lower()
             chain     = tier.get('chain', {}).get('name', '')[:3].lower()
-            contract  = tier.get('contract', {}).get('address', '')
+            contract  = (tier.get('contract') or {}).get('address', '')            
 
             stage     = tier.get('stage', '').lower()
             stage     = 'closed' if 'success' in stage else stage

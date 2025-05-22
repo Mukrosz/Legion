@@ -73,7 +73,7 @@ def get_project_info(projects):
         for tier in project.get('rounds'):
             name      = project['project']['name'].lower()
             chain     = tier.get('chain', {}).get('name', '')[:3].lower()
-            contract  = (tier.get('contract') or {}).get('address', '')            
+            contract  = (tier.get('contract') or {}).get('address', '')
 
             stage     = tier.get('stage', '').lower()
             stage     = 'closed' if 'success' in stage else stage
@@ -82,12 +82,19 @@ def get_project_info(projects):
             fdv       = shorten_number(tier.get('raiseValuation', 0))
             target    = shorten_number(tier.get('raiseTarget', 0))
             tge       = str(tier.get('estimatedTge', ''))
+
+            ontge     = tier.get('tokenAllocationOnTgeRate', '')
+            try:
+                ontge = "{}%".format(int(int(ontge) * 100 / 1e18)) if int(ontge) != 0 else ''
+            except (ValueError, TypeError):
+                ontge = ''
+
             vesting   = str(timedelta(seconds = tier.get('vestingDuration', 0)).days)
             cliff     = str(timedelta(seconds = tier.get('vestingCliffDuration', 0)).days)
             lock      = str(timedelta(seconds = tier.get('lockupPeriod', 0)).days)
             requested = shorten_number(tier.get('totalRequestedAllocation', 0))
 
-            project_list += [[ name, chain, contract, stage, asset, fdv, target, tge, vesting, cliff, lock, requested ]]
+            project_list += [[ name, chain, contract, stage, asset, fdv, target, tge, ontge, lock, cliff, vesting, requested ]]
 
     return project_list
 
@@ -156,7 +163,7 @@ if __name__ == '__main__':
             projects = get_project_info(projects)
             summary = [ p for p in projects if args.filter in p[0].lower() ]
             summary = sorted(summary, key = lambda x: x[0].lower())
-            print_tabular(summary, ['Name', 'Chain', 'Contract', 'Stage', 'Asset', 'FDV', 'Target', 'TGE', 'Vest', 'Cliff', 'Lock', 'Requested'])
+            print_tabular(summary, ['Name', 'Chain', 'Contract', 'Stage', 'Asset', 'FDV', 'Target', 'TGE', 'on TGE', 'Lock', 'Cliff', 'Vest', 'Requested'])
         else:
             for p in projects:
                 if args.filter in p.get("project", {}).get("name").lower():

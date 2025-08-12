@@ -33,7 +33,7 @@ def print_tabular(rows,headers = None):
         # adjust items in col_widths (i.e '----') to match header length if data in column is shorter
         for i in range(len(col_widths)):
             if col_widths[i] - col_pad < len(headers[i]):
-                col_widths[i] = len(headers[i]) + col_pad
+               col_widths[i] = len(headers[i]) + col_pad
 
         headers = [ ['-' * (item - col_pad) for item in col_widths],headers ]
         for header in headers: rows.insert(0,header)
@@ -146,11 +146,15 @@ if __name__ == '__main__':
     
     try:
         # determine the view style 
-        urls = [args.url + '?open=true', args.url + '?open=false']
+        urls = [args.url + '?open=true',
+                args.url + '?open=false',
+                args.url + '?open=true&cohort=nozomi',
+                args.url + '?open=false&cohort=nozomi'
+        ]
         if args.view == 'old':
-            urls = [args.url + '?open=false']
+            urls = [args.url + '?open=false', args.url + '?open=false&cohort=nozomi']
         elif args.view == 'new':
-            urls = [args.url + '?open=true']
+            urls = [args.url + '?open=true', args.url + '?open=true&cohort=nozomi']
 
         projects = []
         for url in urls:

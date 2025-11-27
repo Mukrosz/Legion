@@ -34,6 +34,7 @@ Using Chrome
 ```./query_projects.py --short --token $(cat token.txt)```
 
 > Display a summary for projects from cookie and nozomi curators
+
 ```./query_projects.py --token $(cat ../token.txt) --s --c 'cookie, nozomi'```
 
 > Display a summary for ongoing and upcoming projects

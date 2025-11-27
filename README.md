@@ -27,23 +27,26 @@ Using Chrome
 # Usage
 > Display a summary for all projects
 
-```/legion.py --short --token 'long_bearer_token_string'```
+```./query_projects.py --short --token 'long_bearer_token_string'```
 
 > Feed token string from a file
 
-```/legion.py --short --token $(cat token.txt)```
+```./query_projects.py --short --token $(cat token.txt)```
 
-> Display a summary for ongoing/upcoming projects
+> Display a summary for projects from cookie and nozomi curators
+```./query_projects.py --token $(cat ../token.txt) --s --c 'cookie, nozomi'```
 
-```/legion.py --short --view 'new' --token 'long_bearer_token_string'```
+> Display a summary for ongoing and upcoming projects
+
+```./query_projects.py --short --view 'new' --token 'long_bearer_token_string'```
 
 > Display a summary for a specific project
 
-```/legion.py --short --filter 'project1' --token 'long_bearer_token_string'```
+```./query_projects.py --short --filter 'project1' --token 'long_bearer_token_string'```
 
 > Display a raw json for a specific project
 
-```/legion.py --filter 'project1' --token 'long_bearer_token_string'```
+```./query_projects.py --filter 'project1' --token 'long_bearer_token_string'```
 
 ## Help menu
 > ./query_projects.py -h

@@ -29,6 +29,10 @@ Using Chrome
 
 ```/legion.py --short --token 'long_bearer_token_string'```
 
+> Feed token string from a file
+
+```/legion.py --short --token $(cat token.txt)```
+
 > Display a summary for ongoing/upcoming projects
 
 ```/legion.py --short --view 'new' --token 'long_bearer_token_string'```

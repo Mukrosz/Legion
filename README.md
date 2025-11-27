@@ -51,7 +51,7 @@ Using Chrome
 ## Help menu
 > ./query_projects.py -h
 ```
-usage: query_projects.py [-h] [--filter FILTER] [--view {all,new,old}] [--short] [--url URL] [--token TOKEN]
+usage: query_projects.py [-h] [--filter FILTER] [--view {all,new,old}] [--curators CURATORS] [--short] [--url URL] [--token TOKEN]
 
 Scrape for Legion project details
 
@@ -61,6 +61,8 @@ options:
                         Project name to filter
   --view {all,new,old}, --v {all,new,old}
                         View all, new, old projects. Default new
+  --curators CURATORS, --c CURATORS
+                        Specify curators (comma separated). Default: legion, cookie, nozomi
   --short, --s          Display condensed format, otherwise print raw json
   --url URL, --u URL    End-point URL
   --token TOKEN, --t TOKEN

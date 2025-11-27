@@ -3,10 +3,11 @@ The script scapes Legion's API for project information
 
 Example:
 ```
-Name          Chain  Contract Stage    Asset  FDV   Target  TGE         Vest  Cliff  Lock  Requested
-------------  -----  -------- ------   -----  ----  ------  ----------  ----  -----  ----  ---------
-project1      eth    0x2c...  open     USDC   220M  1M      Q4 2025     1095  365    0     1.2M         
-project2      arb    0x4A...  closed   USDC   45M   500k    Q1/Q2 2025  730   182    0     500k         
+Name         Curator   Chain  Contract Stage    Asset  FDV   Target  TGE         Vest  Cliff  Lock  Requested
+--------     -------   -----  -------- ------   -----  ----  ------  ----------  ----  -----  ----  ---------
+project1     legion    eth    0x2c...  open     USDC   220M  1M      Q4 2025     1095  365    0     1.2M         
+project2     nozomi    arb    0x4A...  closed   USDC   45M   500k    Q1 2025     0     182    0     500k         
+project3     cookie    eth    0x4A...  closed   USDC   100M  2M      Q3 2025     730   182    0     1M         
 ```
 # Requirements
 ##  Python

@@ -10,7 +10,11 @@ import requests
 from   datetime import datetime, timedelta
 from   requests.exceptions import HTTPError, ConnectionError, Timeout, RequestException
 
-CURATORS = ['cookie', 'nozomi']
+CURATORS = 'legion, cookie, nozomi'
+
+def comma_separated_list(value):
+    '''Converts a comma-separated string into a list'''
+    return [item.strip().lower() for item in value.split(',')]
 
 def print_tabular(rows,headers = None):
     ''' 
@@ -168,9 +172,9 @@ if __name__ == '__main__':
                          required = False 
     )
     parser.add_argument('--curators','--c',
-                         help     = 'Specify curators (comma separated). Default: legion, cookie, nozomi',
-                         choices  = ['legion', 'cookie', 'nozomi'],
-                         default  = ['legion', 'cookie', 'nozomi'],
+                         help     = 'Specify curators (comma separated). Default: {}'.format(CURATORS),
+                         type     = comma_separated_list,
+                         default  = CURATORS,
                          required = False 
     )
     parser.add_argument('--short', '--s',
@@ -192,6 +196,11 @@ if __name__ == '__main__':
     )
 
     args = parser.parse_args()
+
+    #validate curators 
+    for curator in args.curators:
+        if curator not in CURATORS:
+            parser.error('Invalid curator: {}. Allowed: {}'.format(curator, CURATORS))
 
     decoded     = jwt.decode(args.token, options={'verify_signature': False})
     expiry_time = datetime.utcfromtimestamp(decoded.get('exp'))
